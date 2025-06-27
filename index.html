@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Typing Speed Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  
+  <button id="themeToggle" class="theme-toggle">🌙 Dark Mode</button>
+  
+  <!-- Name popup -->
+  <div id="namePopup" class="popup-overlay">
+    <div class="popup-box">
+      <h2>Welcome!</h2>
+      <p>Please enter your name to begin:</p>
+      <input type="text" id="usernameInput" placeholder="Your name..." />
+      <button onclick="submitName()">Let's Go</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>🔥 Typing Speed Challenge</h1>
+    <h2 id="greeting" style="display: none;"></h2>
+
+    <div id="quoteDisplay">Press Start to begin!</div>
+
+    <div id="stats">
+      <p>⏱ Time: <span id="timer">0</span>s</p> 
+      <p>💨 WPM: <span id="wpm">0</span></p>
+      <p>🧠 Words Typed: <span id="wordCount">0</span></p>
+    </div>
+
+    <input type="text" id="quoteInput" placeholder="Start typing..." disabled />
+
+    <div class="buttons">
+      <button id="startBtn">Start</button>
+      <button id="stopBtn" disabled>Stop</button>
+    </div>
+
+    <div id="result"></div>
+
+    <div id="instructions" class="instructions" style="display: none;">
+      <p>🏁 <strong>WPM Feedback Scale:</strong></p>
+      <ul>
+        <li><strong>&lt; 20</strong>: Keep Practicing</li>
+        <li><strong>20 - 39</strong>: Good</li>
+        <li><strong>40 - 59</strong>: Very Good</li>
+        <li><strong>60 - 79</strong>: Excellent</li>
+        <li><strong>80+</strong>: You Rocked!</li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
