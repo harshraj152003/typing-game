@@ -31,7 +31,7 @@ async function renderQuote() {
   quoteInput.value = '';
 }
 
-function startGame() {
+async function startGame() {
   resultEl.innerHTML = '';
   document.getElementById('instructions').style.display = 'none';
   greetEl.style.display = 'block';
@@ -51,9 +51,10 @@ function startGame() {
   startBtn.disabled = true;
   stopBtn.disabled = false;
 
-  renderQuote();
-  startTimer();
+  await renderQuote();      // ✅ Wait for quote to load completely
+  startTimer();             // ⏱ Only start timer after quote is ready
 }
+
 
 function stopGame() {
   clearInterval(timerInterval);
@@ -69,7 +70,11 @@ function stopGame() {
   document.getElementById('instructions').style.display = 'block';
 
   const time = parseInt(timerEl.innerText);
-  const wpm = parseInt(wpmEl.innerText);
+
+  // ✅ Include current unfinished input in final word count
+  const unfinishedWords = quoteInput.value.trim().split(/\s+/).filter(Boolean).length;
+  const finalWords = totalWordsTyped + unfinishedWords;
+  const wpm = time > 0 ? Math.floor((finalWords / time) * 60) : 0;
 
   let remark = "Keep practicing!";
   if (wpm >= 80) remark = "🔥 You Rocked!";
@@ -81,10 +86,11 @@ function stopGame() {
     <p><strong>Game Over!</strong></p>
     <p>⏱ Total Time: ${time} sec</p>
     <p>💨 WPM: ${wpm}</p>
-    <p>🧠 Total Words Typed: ${totalWordsTyped}</p>
+    <p>🧠 Total Words Typed: ${finalWords}</p>
     <p>🌟 Remark: ${remark}${userName ? `, ${userName}!` : ''}</p>
   `;
 }
+
 
 function startTimer() {
   startTime = new Date();
@@ -128,9 +134,12 @@ quoteInput.addEventListener('input', () => {
   });
 
   if (correct && arrayValue.length === arrayQuote.length) {
-    totalWordsTyped += quoteInput.value.trim().split(/\s+/).filter(Boolean).length;
-    renderQuote();
-  }
+  const currentQuote = quoteDisplay.innerText.trim();
+  const wordsInQuote = currentQuote.split(/\s+/).length;
+  totalWordsTyped += wordsInQuote;
+
+  renderQuote();
+}
 });
 
 startBtn.addEventListener('click', startGame);
