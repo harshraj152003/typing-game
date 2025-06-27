@@ -6,7 +6,7 @@ A fully responsive and interactive **Typing Speed Game** built with **HTML**, **
 
 ## 🌐 Live Project
 
-▶️ [Play the Game Live](https://harshraj152005.github.io/typing-game/)
+▶️ [Play the Game Live](https://harshraj152003.github.io/typing-game/)
 
 ---
 
@@ -92,7 +92,7 @@ typing-game/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/harshraj152005/typing-game.git
+git clone https://github.com/harshraj152003/typing-game.git
 cd typing-game
 
 2. Open index.html in your browser.
@@ -129,4 +129,4 @@ This project is licensed under the **MIT License**.
 ## 🙌 Author
 
 Made with ❤️ by **Harsh Raj**  
-GitHub: [@harshraj152005](https://github.com/harshraj152005)
+GitHub: [@harshraj152005](https://github.com/harshraj152003)
