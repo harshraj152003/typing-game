@@ -14,21 +14,45 @@ let startTime, timerInterval;
 let started = false;
 let totalWordsTyped = 0;
 
+// Fetch with timeout helper
+function fetchWithTimeout(url, timeout = 10000) {
+  return Promise.race([
+    fetch(url),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Request timed out")), timeout)
+    )
+  ]);
+}
+
 async function getRandomQuote() {
-  const response = await fetch("https://api.quotable.io/random");
-  const data = await response.json();
-  return data.content;
+  try {
+    const response = await fetchWithTimeout("https://api.quotable.io/random");
+    const data = await response.json();
+    return data.content;
+  } catch (error) {
+    throw new Error("Failed to fetch quote");
+  }
 }
 
 async function renderQuote() {
-  const quote = await getRandomQuote();
-  quoteDisplay.innerHTML = '';
-  quote.split('').forEach(char => {
-    const span = document.createElement('span');
-    span.innerText = char;
-    quoteDisplay.appendChild(span);
-  });
-  quoteInput.value = '';
+  try {
+    quoteDisplay.innerText = '⏳ Loading...';
+    const quote = await getRandomQuote();
+    quoteDisplay.innerHTML = '';
+    quote.split('').forEach(char => {
+      const span = document.createElement('span');
+      span.innerText = char;
+      quoteDisplay.appendChild(span);
+    });
+    quoteInput.value = '';
+  } catch (err) {
+    quoteDisplay.innerHTML = `<span style="color: red;">❌ Quote load failed. Please check your network!</span>`;
+    quoteInput.disabled = true;
+
+    setTimeout(() => {
+      location.reload(); // auto-restart
+    }, 5000);
+  }
 }
 
 async function startGame() {
@@ -51,10 +75,9 @@ async function startGame() {
   startBtn.disabled = true;
   stopBtn.disabled = false;
 
-  await renderQuote();      // ✅ Wait for quote to load completely
-  startTimer();             // ⏱ Only start timer after quote is ready
+  await renderQuote();
+  startTimer();
 }
-
 
 function stopGame() {
   clearInterval(timerInterval);
@@ -70,8 +93,6 @@ function stopGame() {
   document.getElementById('instructions').style.display = 'block';
 
   const time = parseInt(timerEl.innerText);
-
-  // ✅ Include current unfinished input in final word count
   const unfinishedWords = quoteInput.value.trim().split(/\s+/).filter(Boolean).length;
   const finalWords = totalWordsTyped + unfinishedWords;
   const wpm = time > 0 ? Math.floor((finalWords / time) * 60) : 0;
@@ -91,7 +112,6 @@ function stopGame() {
   `;
 }
 
-
 function startTimer() {
   startTime = new Date();
   timerInterval = setInterval(() => {
@@ -108,7 +128,6 @@ function startTimer() {
     }
   }, 1000);
 }
-
 
 quoteInput.addEventListener('input', () => {
   if (!started) return;
@@ -134,12 +153,11 @@ quoteInput.addEventListener('input', () => {
   });
 
   if (correct && arrayValue.length === arrayQuote.length) {
-  const currentQuote = quoteDisplay.innerText.trim();
-  const wordsInQuote = currentQuote.split(/\s+/).length;
-  totalWordsTyped += wordsInQuote;
-
-  renderQuote();
-}
+    const currentQuote = quoteDisplay.innerText.trim();
+    const wordsInQuote = currentQuote.split(/\s+/).length;
+    totalWordsTyped += wordsInQuote;
+    renderQuote();
+  }
 });
 
 startBtn.addEventListener('click', startGame);
@@ -178,12 +196,10 @@ function setTheme(mode) {
   localStorage.setItem('theme', mode);
 }
 
-// Toggle event
 themeToggle.addEventListener('click', () => {
   const isDark = document.body.classList.contains('dark');
   setTheme(isDark ? 'light' : 'dark');
 });
 
-// On load: apply saved theme
 const savedTheme = localStorage.getItem('theme') || 'light';
 setTheme(savedTheme);
