@@ -92,14 +92,17 @@ function startTimer() {
     const elapsed = Math.floor((new Date() - startTime) / 1000);
     timerEl.innerText = elapsed;
 
-    const currentWords = quoteInput.value.trim().split(/\s+/).filter(Boolean).length;
-    const wpm = Math.floor((currentWords / elapsed) * 60);
-    if (elapsed > 0) {
+    if (elapsed >= 1) {
+      const currentWords = quoteInput.value.trim().split(/\s+/).filter(Boolean).length;
+      const totalTyped = totalWordsTyped + currentWords;
+      const wpm = Math.floor((totalTyped / elapsed) * 60);
+
       wpmEl.innerText = wpm;
-      wordCountEl.innerText = totalWordsTyped + currentWords;
+      wordCountEl.innerText = totalTyped;
     }
   }, 1000);
 }
+
 
 quoteInput.addEventListener('input', () => {
   if (!started) return;
